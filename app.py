@@ -34,6 +34,11 @@ def init_click_stream_db():
     conn.commit()
     conn.close()
 
+# トップページ ウェルカムメッセージを表示
+@app.route('/')
+def index():
+    return "Welcome to URL Shortener!"
+
 # リダイレクトリンクの作成とクリック数の記録
 @app.route('/<slug>')
 def redirect_link(slug):
@@ -54,6 +59,9 @@ def redirect_link(slug):
     conn.execute('INSERT INTO click_stream (slug, ip_address, timestamp) VALUES (?, ?, datetime("now"))', (slug, request.remote_addr))
     conn.commit()
     conn.close()
+
+    # slugとリダイレクト先をログ出力
+    print(f"Slug: {slug} - URL: {links_data['url']}")
 
     # リダイレクト先に転送
     return redirect(links_data['url'])
